@@ -1,0 +1,8 @@
+To run this project:
+1. Install all npm dependencies:
+npm install
+2. Install all bower dependencies:
+bower install
+3. run project:
+npm start
+4. Run in browser: 127.0.0.1:3000
