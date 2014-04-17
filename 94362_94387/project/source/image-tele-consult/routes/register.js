@@ -1,9 +1,6 @@
-var express = require('express');
-var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res) {
-  res.render('register', { title: 'Image TeleConsult' });
-});
-
-module.exports = router;
+module.exports.controller = function(app, passport) {
+	app.get('/register', function(req, res) {
+		res.render('register', { title: 'Image TeleConsult' });
+	});
+}

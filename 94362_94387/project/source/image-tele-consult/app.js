@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-
+var fs = require('fs')
 
 
 var app = express();
@@ -24,9 +24,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 
-var indexRoute = require('./routes/index');
-var usersRoute = require('./routes/users');
-var registerRoute = require('./routes/register');
 
 var Account = require(__dirname +'/models/account')
 passport.use(Account.createStrategy());
@@ -38,14 +35,22 @@ db.once('open', function callback () {
 });
 
 //Sending passport object to all routes
-app.use(function(req,res,next){
-    req.passport = passport;
-    next();
+//app.use(function(req,res,next){
+//    req.passport = passport;
+//    next();
+//});
+
+//app.use('/', indexRoute);
+//app.use('/users', usersRoute);
+//app.use('/register', registerRoute);
+
+fs.readdirSync('./routes').forEach(function (file) {
+  if(file.substr(-3) == '.js') {
+      route = require('./routes/' + file);
+      route.controller(app);
+  }
 });
 
-app.use('/', indexRoute);
-app.use('/users', usersRoute);
-app.use('/register', registerRoute);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
