@@ -5,4 +5,4 @@ npm install
 bower install
 3. run project:
 npm start
-4. Run in browser: 127.0.0.1:3000
+4. Run in browser: https://127.0.0.1:3000

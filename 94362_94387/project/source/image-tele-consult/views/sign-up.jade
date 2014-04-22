@@ -1,0 +1,17 @@
+extends layout
+
+block content
+	form(id='form-sign-up',method="post", class='form-signin', role='form', data-bv-message='This value is not valid', data-bv-feedbackicons-valid='glyphicon glyphicon-ok', data-bv-feedbackicons-invalid='glyphicon glyphicon-remove', data-bv-feedbackicons-validating='glyphicon glyphicon-refresh'
+	)
+		h2(class='form-signin-heading') Sign up	
+		-if (error)
+			div(class='alert alert-danger') #{error}
+		div(class='form-group')
+			input(type='email', name='email', class='form-control', placeholder='Email address', data-bv-emailaddress='true', data-bv-emailaddress-message='The input is not a correct email address')
+		div(class='form-group')
+			input(name='password', id='password', type='password', class='form-control', placeholder='Password', data-bv-notempty='true', data-bv-notempty-message='The password is required and cannot be empty', data-bv-identical='true', data-bv-identical-field='confirmPassword', data-bv-identical-message='The password and its confirm are not the same', data-bv-different='true', data-bv-different-field='email', data-bv-different-message='The password cannot be the same as email', autofocus)
+		div(class='form-group')
+			input(name='confirmPassword', type='password', data-bv-notempty='true', data-bv-notempty-message='The confirm password is required and cannot be empty', data-bv-identical='true', data-bv-identical-field='password', data-bv-identical-message='The password and its confirm are not the same', data-bv-different='true', data-bv-different-field='email', data-bv-different-message='The password cannot be the same as email', class='form-control last-input', placeholder='Confirm Password', autofocus)
+		
+		button(class='btn btn-lg btn-primary btn-block', type='submit') Sign in
+		a(class='sign-options', href='sign-in') Sign in 

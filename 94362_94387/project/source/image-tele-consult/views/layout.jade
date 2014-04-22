@@ -3,25 +3,27 @@ html
   head
     title= title
     link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.css')
+    link(rel='stylesheet', href='/bower_components/bootstrapValidator/src/css/bootstrapValidator.css')
+    link(rel='stylesheet', href='/bower_components/jquery-loader-plugin/jquery.loader.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(src='/bower_components/jquery/dist/jquery.js')
     script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
+    script(src='/bower_components/bootstrapValidator/dist/js/bootstrapValidator.js')
+    script(src='/javascripts/app.js')
+    script(src='/bower_components/jquery-loader-plugin/jquery.loader.js')
   body
     div(class='navbar navbar-inverse navbar-fixed-top', role='navigation')
       div(class='container')
         div(class='navbar-header')
-          button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='.navbar-collapse')
-            span(class='sr-only') Toggle navigation
-            span(class='icon-bar')
-            span(class='icon-bar')
-            span(class='icon-bar')
           a(class='navbar-brand') Image TeleConsult
         div(class='navbar-collapse collapse')
-          div(class='navbar-form navbar-right' role='form')
-            div(class='form-group')
-              input(type='text', placeholder='Email', class='form-control')
-            div(class='form-group')
-              input(type='password', placeholder='Password', class='form-control')
-            button(type='submit', class='btn btn-success') Sign in
+          - if (settings.user)
+            ul(class='nav navbar-nav navbar-right')
+              li(class='dropdown')
+                a(id='user-menu', role='button', class='toggle-dropdown', data-toggle='dropdown', href='#') #{settings.user.email}
+                ul(class='dropdown-menu', role='menu', aria-labelledby='user-menu')
+                  li
+                    a(id='sign-out-button', href='#') Sign Out
+
     div(class='container')
       block content

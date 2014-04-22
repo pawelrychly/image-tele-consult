@@ -1,9 +1,29 @@
 #!/usr/bin/env node
 var debug = require('debug')('my-application');
-var app = require('../app');
+var app = require('../app').app;
+var https_options = require('../app').https_options
 
-app.set('port', process.env.PORT || 3000);
+var https = require('https')
+https.createServer(https_options, app).listen(process.env.PORT || 3000)
+
+require("http").createServer(function(req, res){
+     console.log(req.headers.host)
+     console.log(req.headers)
+     
+     host = req.headers.host.split(":")
+     host[1] = 3000;
+     host = host.join(":")
+     console.log(host)
+
+     res.writeHead(301, {
+       'Content-Type': 'text/plain', 
+       'Location':'https://'+host+req.url});
+     res.end('Redirecting to SSL\n');
+  }).listen(3001);
+
+/*app.set('port', process.env.PORT || 3000);
 
 var server = app.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
 });
+*/

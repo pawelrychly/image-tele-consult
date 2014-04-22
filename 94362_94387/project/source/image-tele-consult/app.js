@@ -10,6 +10,15 @@ var LocalStrategy = require('passport-local').Strategy;
 var fs = require('fs')
 
 
+//SSL config
+var https = require('https');
+var key = fs.readFileSync('./localhost-key.pem');
+var cert = fs.readFileSync('./localhost-cert.pem')
+var https_options = {
+    key: key, 
+    cert: cert
+}
+
 var app = express();
 
 // view engine setup
@@ -27,27 +36,26 @@ app.use(passport.initialize());
 
 var Account = require(__dirname +'/models/account')
 passport.use(Account.createStrategy());
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/image-tele-consult');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
   console.log("MongoDB: connection established!")
 });
 
-//Sending passport object to all routes
-//app.use(function(req,res,next){
-//    req.passport = passport;
-//    next();
-//});
-
-//app.use('/', indexRoute);
-//app.use('/users', usersRoute);
-//app.use('/register', registerRoute);
+//reading token
+app.use(function(req, res, next) {
+    res.locals.user = {email: false};
+    if (typeof req.headers.email !== 'undefined'){
+        res.locals.user = {email: req.headers.email};            
+    } 
+    next();
+});
 
 fs.readdirSync('./routes').forEach(function (file) {
   if(file.substr(-3) == '.js') {
       route = require('./routes/' + file);
-      route.controller(app);
+      route.controller(app, passport);
   }
 });
 
@@ -58,6 +66,8 @@ app.use(function(req, res, next) {
     err.status = 404;
     next(err);
 });
+
+
 
 /// error handlers
 
@@ -84,4 +94,5 @@ app.use(function(err, req, res, next) {
 });
 
 
-module.exports = app;
+module.exports.app = app;
+module.exports.https_options = https_options

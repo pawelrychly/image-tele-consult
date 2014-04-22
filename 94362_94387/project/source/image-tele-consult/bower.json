@@ -12,6 +12,8 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "~3.1.1"
+    "bootstrap": "~3.1.1",
+    "bootstrapValidator": "~0.4.1",
+    "jquery-loader-plugin": "~2.1.1"
   }
 }

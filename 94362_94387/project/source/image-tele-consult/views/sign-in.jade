@@ -1,0 +1,13 @@
+extends layout
+
+block content
+	form(id='form-sign-in', method="post", class='form-signin', role='form', data-bv-message='This value is not valid', data-bv-feedbackicons-valid='glyphicon glyphicon-ok', data-bv-feedbackicons-invalid='glyphicon glyphicon-remove', data-bv-feedbackicons-validating='glyphicon glyphicon-refresh'
+	)
+		h2(class='form-signin-heading') Sign in	
+		div(id='messages')
+		div(class='form-group')
+			input(type='email', name='email', class='form-control', placeholder='Email address', data-bv-emailaddress='true', data-bv-emailaddress-message='The input is not a correct email address')
+		div(class='form-group')
+			input(name='password', id='password', type='password', class='form-control', placeholder='Password', data-bv-notempty='true', autofocus)
+		button(id='sign-in-button', class='btn btn-lg btn-primary btn-block', type='submit') Sign in
+		a(class='sign-options', href='sign-up') Create Account 
