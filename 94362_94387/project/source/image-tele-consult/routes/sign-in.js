@@ -14,7 +14,7 @@ module.exports.controller = function(app, passport) {
             }
             if (!err && user) {
                 console.log("USER:")
-            console.log(user)
+                console.log(user)
                 Account.createToken(user.email, function(err, createdToken) {
                     if (err) {
                         res.render('messages',{error: 'Error during token generating'});

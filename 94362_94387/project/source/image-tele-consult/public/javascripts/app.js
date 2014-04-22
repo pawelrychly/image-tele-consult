@@ -41,6 +41,25 @@ $('document').ready(function() {
         return false; 
     });
 
+    $("#form-sign-up").submit(function() {
+        self = this
+        $.ajax({
+                type: "POST",   
+                url: "/sign-up",
+                data: $("#form-sign-up").serialize(),
+                success: function(data){
+                    if (data.token) {
+                        sessionStorage.setItem('user', JSON.stringify({email: data.email, token: data.token}));
+                        window.location.replace("/api?token=" + data.token );
+                    } else {
+                        $(self).find("#messages").html(data)
+                    }
+                    
+                },
+             });
+        return false; 
+    });
+
     $("#sign-out-button").click(function() {
         $.ajax({
             type: "GET",   

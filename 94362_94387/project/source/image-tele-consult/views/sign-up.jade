@@ -4,8 +4,7 @@ block content
 	form(id='form-sign-up',method="post", class='form-signin', role='form', data-bv-message='This value is not valid', data-bv-feedbackicons-valid='glyphicon glyphicon-ok', data-bv-feedbackicons-invalid='glyphicon glyphicon-remove', data-bv-feedbackicons-validating='glyphicon glyphicon-refresh'
 	)
 		h2(class='form-signin-heading') Sign up	
-		-if (error)
-			div(class='alert alert-danger') #{error}
+		div(id='messages')
 		div(class='form-group')
 			input(type='email', name='email', class='form-control', placeholder='Email address', data-bv-emailaddress='true', data-bv-emailaddress-message='The input is not a correct email address')
 		div(class='form-group')

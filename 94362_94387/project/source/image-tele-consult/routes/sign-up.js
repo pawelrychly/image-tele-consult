@@ -14,10 +14,19 @@ module.exports.controller = function(app, passport) {
 
         Account.register(user, password, function(error, account) {
             if (error) {
-                res.render('sign-up',  { error: error.message });
+                res.render('messages',  { error: error.message });
             }
             else {
-                res.redirect('/api');
+                console.log(account)
+                Account.createToken(account.email, function(err, createdToken) {
+                    if (err) {
+                        res.render('messages',{error: 'Error during token generating'});
+                    } else {
+                        res.json({email: user.email, token : createdToken});    
+                    }
+                });
+
+                //res.redirect('/api?token=account');
             }
         });
 	})
