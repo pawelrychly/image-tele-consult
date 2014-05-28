@@ -25,7 +25,7 @@ module.exports.controller = function(app, passport) {
 			console.log("User but no token")
 			user = app.get('user') || false
 			if (user) {
-				console.log("No token. User:" + user)
+				console.log("No token. User:")
 				res.render('api')
 			} else {
 				console.log("User is not logged.")

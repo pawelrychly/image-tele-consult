@@ -8,6 +8,9 @@ $('document').ready(function() {
                 if (user && user.token) {
                     xhr.setRequestHeader('X-Token', user.token);
                 }
+                console.log(user)
+            } else {
+                console.log("Unknown user")
             }
             $.loader({
                 className:"blue-with-image-2",
@@ -73,4 +76,36 @@ $('document').ready(function() {
          });
         return false;
     })
+
+    $("#image-upload-form").submit(function(event) {
+        self = this
+        event.stopPropagation();
+        event.preventDefault();
+        var fileSelect = $(this).find("#file-select")[0]
+        var formData = new FormData();
+        console.log(fileSelect.files)
+        files = fileSelect.files
+        for (var i = 0; i < files.length; i++) {
+          var file = files[i];
+          if (file.type.match('image.*') || file.type.match('.*dicom')) {
+            formData.append('images', file, file.name);
+          }
+        } 
+        $.ajax({
+            type: "POST",   
+            url: "/api/images",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data){
+               if (data.status == "OK") {
+                    $("#images").load('/api/images');
+               }                       
+            },
+         });
+        console.log("prevent-default")
+        return false; 
+    });
+
+    $("#images").load('/api/images');
 })

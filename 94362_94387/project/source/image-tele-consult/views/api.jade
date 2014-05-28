@@ -2,4 +2,10 @@ extends layout
 
 block content
 	p Welcome to #{title}
-	
+	div(id='images-panel')
+		div
+			form(method=post, enctype='multipart/form-data', role='form', id='image-upload-form')
+				input(type='file', id='file-select', name='images', multiple)
+				input(id='upload-button', type='submit')
+		div(id='images')
+		

@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var fs = require('fs')
-
+var multer = require('multer')
 
 //SSL config
 var https = require('https');
@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
-
+app.use(multer({ dest: './uploads/'}))
 
 var Account = require(__dirname +'/models/account')
 passport.use(Account.createStrategy());
@@ -52,9 +52,23 @@ app.use(function(req, res, next) {
     next();
 });
 
-fs.readdirSync('./routes').forEach(function (file) {
+readFilesFromDirectory = function getFiles(dir, list){
+    var files = fs.readdirSync(dir);
+    for(var i in files){
+        if (!files.hasOwnProperty(i)) continue;
+        var name = dir+'/'+files[i];
+        if (fs.statSync(name).isDirectory()){
+            getFiles(name, list);
+        }else{
+            list.push(name)
+        }
+    }
+    return list
+}
+
+readFilesFromDirectory('./routes', []).forEach(function (file) {
   if(file.substr(-3) == '.js') {
-      route = require('./routes/' + file);
+      route = require(file);
       route.controller(app, passport);
   }
 });
