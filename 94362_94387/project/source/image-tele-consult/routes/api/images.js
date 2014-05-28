@@ -4,10 +4,19 @@ var mongoose = require('mongoose')
 
 module.exports.controller = function(app, passport) {
 
+	app.delete('/api/images/:id', function(req, res, next) {
+		var id = req.params.id
+		var image_id = mongoose.Types.ObjectId(id)
+		Image.remove({_id: image_id }, function(err){
+			if (err) throw err;
+			res.json({status:"OK"})	
+		})
+	})
+
 	app.get('/api/images', function(req, res, next) {
 		var user = app.get('user') || false
 	    var user_id = mongoose.Types.ObjectId(user._id.toString())
-	    Image.find({user: user_id},{name: ""}, function(err, data) {
+	    Image.find({user: user_id},{name: "", _id: "", size: "0"}, function(err, data) {
 	    	if (err) {
 	    		throw err;
 	    	}
@@ -32,10 +41,7 @@ module.exports.controller = function(app, passport) {
 		  		if (extension == fileName) {
 		  			extension = ""
 		  		}
-				console.log("Filename")
-				console.log(fileName)
-				console.log("data:")
-				console.log("{name:"+ (fileName+"."+extension)+", user: "+ user_id+"}")
+				
 	    		var originalName = file.originalname
 	    		Image.count({originalname: originalName, user: user_id}, function( err, count) {
 				    if (count > 0) {
@@ -50,7 +56,8 @@ module.exports.controller = function(app, passport) {
 				    	name: fileName,
 			    		user: user_id,
 			    		image: data,
-					})
+			    		size: file.size
+			 		})
 					imageData.save(function(err){
 						if (err) throw err;
 						fs.unlink(file.path, function (err) {

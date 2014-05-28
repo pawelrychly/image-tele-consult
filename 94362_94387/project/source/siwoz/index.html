@@ -1,13 +1,71 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
+	<style type="text/css">
+		h3 {
+			font-size: 16px;
+			font-family: arial;
+			margin-top: 5px;
+			margin-bottom: 5px;
+		}
+		#filters {
+			float: left;
+			width: 25%;
+			border-width: 2px;
+			border-style: solid;
+			border-color: #c2c2c2;
+			margin-right: 10px;
+			padding: 10px;
+			height:80px;
+		}
+		#modes {
+			float: left;
+			width:40%;
+			border-width: 2px;
+			border-style: solid;
+			border-color: #c2c2c2;
+			padding: 10px;
+			margin-right: 10px;
+			height:80px;
+		}
+		#extras {
+			float: left;
+			width:25%;
+			border-width: 2px;
+			border-style: solid;
+			border-color: #c2c2c2;
+			padding: 10px;
+			height:80px;
+		}
+		#none {
+			font-weight: bolder;
+		}
+
+	</style>
 	</head>
 	<body>
+		<div id="filters">
+			<h3>Filters</h3>
+			<button id="invertFilter">Invert Colors</button>
+			<button id="grayscaleFilter">Convert to Grayscale</button>
+			<button id="brightenFilterUP">Increase brightness</button>
+			<button id="brightenFilterDOWN">Lower brightness</button>
+		</div>
+		<div id="modes">
+			<h3>Modes</h3>
+			<button id="none">Drag and drop</button>
+			<button id="rectangle">Rectangle</button>
+			<button id="point">Point</button>
+			<button id="text">Text</button><br/>
+		</div>
+		<div id="extras">
+			<h3>Extras</h3>
+			<button id="loadImage">LOAD SAMPLE IMAGE</button>
+			<button id="undo">UNDO LAST ACTION</button>
+		</div>
+		<div style="clear:both">
+		
 		<div id="container"></div>
-		<button id="rectangle">Rectangle</button>
-		<button id="point">Point</button>
-		<button id="text">Text</button><br/>
-		<button id="loadImage">LOAD SAMPLE IMAGE</button>
 		<script src="jquery.js"></script>
 		<script src="kinetic.js"></script>
 		<script type="text/javascript" src="code.js"></script>

@@ -99,13 +99,41 @@ $('document').ready(function() {
             contentType: false,
             success: function(data){
                if (data.status == "OK") {
-                    $("#images").load('/api/images');
+                    $("#images").load('/api/images', function(err){
+                        $(this).trigger("load")
+                    });
                }                       
             },
          });
         console.log("prevent-default")
         return false; 
     });
+    $("#images").on("load", function(event){
+        $(this).find(".remove-image").click(function(event){
+            
+            var id = $(this)[0].getAttribute("data-id").toString()
+            $('#delete-confirm').click(function(){
+                $.ajax({
+                    type: "DELETE",   
+                    url: "/api/images/" + id,
+                    processData: false,
+                    contentType: false,
+                    success: function(data){
+                       if (data.status == "OK") {
+                            $("#images").load('/api/images', function(err){
+                                $(this).trigger("load")
+                            });
+                       }                       
+                    },
+                });
+                $('#delete-image-confirm').modal('hide')
+            });
+            $('#delete-image-confirm').modal()
+        })
+    });
 
-    $("#images").load('/api/images');
+    $("#images").load('/api/images', function(err) {
+        $(this).trigger("load");
+    });
+    
 })
