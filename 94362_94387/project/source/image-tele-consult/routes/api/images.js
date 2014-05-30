@@ -1,8 +1,56 @@
 var Image = require('../../models/image');
 var fs = require("fs")
 var mongoose = require('mongoose')
+var mkdirp = require('mkdirp')
+var path = require('path')
 
 module.exports.controller = function(app, passport) {
+
+	app.get('/api/images/:id/download', function(req, res, next) {
+		var user = req.user || false
+	    var user_id = mongoose.Types.ObjectId(user._id.toString())
+		var id = req.params.id
+		var image_id = mongoose.Types.ObjectId(id)
+		Image.find({_id: image_id }, function(err, data){
+			if (err) throw err;
+			if (data.length > 0) {
+				image = data[0]
+				var fileDir = __dirname + '/../../uploads/' + user_id;
+  				mkdirp(fileDir, function(err) { 
+  					fileName = fileDir + "/" + image.name
+  					fs.writeFile(fileName, image.image, function(err) {
+					    if(err) {
+					        console.log(err);
+					    } else {
+					        resolvedDir = path.resolve(fileName);
+					        console.log(resolvedDir)
+					        res.download(resolvedDir, function(err){
+							  if (err) {
+							    throw err;
+							  } else {
+							  	fs.unlink(resolvedDir, function (err) {
+									if (err) throw err;
+									console.log('dir successfully deleted');
+								});
+							  }
+							});
+					    }
+					});
+				});
+
+  				  				//res.download(file); // Set disposition and send it.
+			}
+			
+			/*fs.writeFile("//test", "Hey there!", function(err) {
+			    if(err) {
+			        console.log(err);
+			    } else {
+			        console.log("The file was saved!");
+			    }
+			}); */
+				
+		})
+	})	
 
 	app.delete('/api/images/:id', function(req, res, next) {
 		var id = req.params.id
@@ -14,19 +62,23 @@ module.exports.controller = function(app, passport) {
 	})
 
 	app.get('/api/images', function(req, res, next) {
-		var user = app.get('user') || false
+		console.log("DIR: /api/images")
+		//var user = app.get('user') || false
+	    var user = req.user || false
+	    
 	    var user_id = mongoose.Types.ObjectId(user._id.toString())
 	    Image.find({user: user_id},{name: "", _id: "", size: "0"}, function(err, data) {
 	    	if (err) {
 	    		throw err;
 	    	}
-	    	console.log(data)
+	    	//console.log(data)
 	    	res.render('api/images',{images: data});
 	    });
 	})	
 
 	app.post('/api/images', function(req, res, next) {
-		var user = app.get('user') || false
+		var user = req.user || false
+	    
 	    var user_id = mongoose.Types.ObjectId(user._id.toString())
 	    var images = req.files || false
 	    images = images.images	
@@ -50,7 +102,7 @@ module.exports.controller = function(app, passport) {
 				    if (extension.length > 0) {
 				    	fileName = fileName + "." + extension
 				    }
-				    console.log(count)
+				   
 				    imageData = new Image({
 				    	originalname: originalName,
 				    	name: fileName,
@@ -70,11 +122,10 @@ module.exports.controller = function(app, passport) {
 	    	}
 			saveFileToMongoDB = function(file) {
 			    if (file.mimetype.match('image.*') || file.mimetype.match('.*dicom')) {
-			    console.log("Reading file" + file.path)
-			    fs.readFile(file.path, function (err, data) {
-			    	checkFileNameAndSave(file, data)
-				});
-			  }
+				    fs.readFile(file.path, function (err, data) {
+				    	checkFileNameAndSave(file, data)
+					});
+			  	}
 			}
 			saveFileToMongoDB(imageFile);
         } 

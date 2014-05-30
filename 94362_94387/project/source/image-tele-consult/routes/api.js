@@ -3,18 +3,15 @@ var Account = require('../models/account');
 
 module.exports.controller = function(app, passport) {
 	
-	app.all('/api*', function(req, res, next) {
-		//console.log(req)
-		//console.log(req.param)
-		console.log('headers')
-		console.log(req.headers)
+	var getUser = function(req, res, next) {
+		console.log("getUser")
 		var token = req.headers['x-token'] || req.param('token') || null;
-		console.log(token)
 		if (token !== null) {
 			Account.checkUserToken(token, function(isLoggedIn, usr) {
 	        	if (isLoggedIn) {
 	        		console.log("You are logged In2");
-	        		app.set('user', usr);
+	        		req.user = usr
+	        		//app.set('user', usr);
 	        		next();
 	        	} else {
 	        		console.log("Is not logged in")
@@ -22,22 +19,32 @@ module.exports.controller = function(app, passport) {
 	        	}
         	})		
 		} else { 
-			console.log("User but no token")
-			user = app.get('user') || false
+			console.log("No token")
+			res.redirect('/sign-in')
+			/*user = app.get('user') || false
 			if (user) {
-				console.log("No token. User:")
+				console.log(user)
+				console.log("User but no token")
 				res.render('api')
 			} else {
 				console.log("User is not logged.")
-				res.redirect('/sign-in')
-			}
+				
+			}*/
 		}
+	}
+
+	app.all('/api', function(req, res, next) {
+		console.log("/API")
+		getUser(req,res,next)
+	});
+
+	app.all('/api/*', function(req, res, next) {
+		console.log("/API/*")
+		getUser(req,res,next)
 	});
 	
 	app.get('/api', function(req, res) {
-		console.log("Application User")
-		user = app.get('user')
-		console.log(user)
+		user = req.user //app.get('user')
 		res.render('api', { title: 'Image TeleConsult', success: req.param('success') });
 	});
 
@@ -46,14 +53,12 @@ module.exports.controller = function(app, passport) {
 	});
 
 	app.get('/api/sign-out', function(req, res) {
-        console.log('headers')
-		console.log(req.headers)
+        
 		var token = req.headers['x-token'] || req.param('token') || null;
-		console.log(token)
 		if (token) {
             Account.removeToken(token, function(err, usr) {
                 if (!err) {
-                    app.set('user', false)
+                    //app.set('user', false)
                     res.json({isLoggedOut: true});
                 } else {
                 	console.log("Error during log out.")

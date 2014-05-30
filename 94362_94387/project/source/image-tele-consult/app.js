@@ -57,10 +57,15 @@ readFilesFromDirectory = function getFiles(dir, list){
     for(var i in files){
         if (!files.hasOwnProperty(i)) continue;
         var name = dir+'/'+files[i];
+        if (!fs.statSync(name).isDirectory()){
+            list.push(name)
+        }
+    }
+    for(var i in files){
+        if (!files.hasOwnProperty(i)) continue;
+        var name = dir+'/'+files[i];
         if (fs.statSync(name).isDirectory()){
             getFiles(name, list);
-        }else{
-            list.push(name)
         }
     }
     return list
