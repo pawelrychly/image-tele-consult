@@ -1,4 +1,6 @@
 var Image = require('../../models/image');
+var Permission = require('../../models/permission');
+var Account = require('../../models/account');
 var fs = require("fs")
 var mongoose = require('mongoose')
 var mkdirp = require('mkdirp')
@@ -67,13 +69,41 @@ module.exports.controller = function(app, passport) {
 	    var user = req.user || false
 	    
 	    var user_id = mongoose.Types.ObjectId(user._id.toString())
-	    Image.find({user: user_id},{name: "", _id: "", size: "0"}, function(err, data) {
-	    	if (err) {
-	    		throw err;
-	    	}
-	    	//console.log(data)
-	    	res.render('api/images',{images: data});
-	    });
+	    Permission.find({userID:user_id}, {userID:"", imageID:""}, function(err, permissions) {
+	    	/*var ids = ['512d5793abb900bf3e20d012', '512d5793abb900bf3e20d011'];
+			ids = ids.map(function(id) { return ObjectId(id); });
+			db.test.find({_id: {$in: ids}});*/
+			if (err) throw err;
+			var ids = permissions.map(function(permission) {
+				return permission.imageID
+			})
+
+			Image.find({_id: {$in: ids}},{name: "", _id: "", size: "0", user:""}, function(err, images) {
+		    	console.log("images")
+		    	if (err) {
+		    		throw err;
+		    	}
+		    	Account.find({}, {email:"", _id:""}, function(err, users) {
+		    		console.log("accounts")
+		    		var emailsByIds = {}
+		    		for (i in users) {
+		    			emailsByIds[users[i]._id.toString()] = users[i].email
+			    	} 
+			    	console.log(emailsByIds)
+			    	var dataToDisplay = []
+			    	for (i in images) {
+			    		dataToDisplay.push({
+			    			_id: images[i]._id,
+			    			name: images[i].name,
+			    			size: images[i].size,
+			    			user: emailsByIds[images[i].user]
+			    		})
+			    	}
+			    	//console.log(dbata)
+			    	res.render('api/images',{images: dataToDisplay});
+			    }) 
+	    	});	
+	    })
 	})	
 
 	app.post('/api/images', function(req, res, next) {
@@ -103,21 +133,28 @@ module.exports.controller = function(app, passport) {
 				    	fileName = fileName + "." + extension
 				    }
 				   
-				    imageData = new Image({
+				    var imageData = new Image({
 				    	originalname: originalName,
 				    	name: fileName,
 			    		user: user_id,
 			    		image: data,
 			    		size: file.size
 			 		})
+			 		var permissionData = new Permission({
+			 			imageID: imageData._id,
+			 			userID: user_id
+			 		})
 					imageData.save(function(err){
 						if (err) throw err;
 						fs.unlink(file.path, function (err) {
-								if (err) throw err;
-								console.log('successfully deleted ' + file.path);
+							if (err) throw err;
+							console.log('successfully deleted ' + file.path);
 						});
-						res.json({status:"OK"})	
-					});	
+						permissionData.save(function() {
+							res.json({status:"OK"})	
+						})
+					});
+						
 				});
 	    	}
 			saveFileToMongoDB = function(file) {

@@ -3,14 +3,18 @@ table(class="table table-hover")
 		tr
 			td file name
 			td size (bytes)
-			td 
+			td owner 
+			td
 	tbody
 	for image in images
 		tr
 			td= image.name
 			td= image.size
+			td= image.user
 			td
-				button(type="button", class="btn btn-primary btn-xs download-image",data-id=image._id.toString(), download)
-					span(class="glyphicon glyphicon-download-alt")
+				button(type="button", data-id=image._id.toString(), class="btn btn-primary btn-xs remove-image", data-toggle="modal" data-target="#cooperators")
+					span(class="glyphicon glyphicon-user") Cooperators
+				button(type="button", class="btn btn-info btn-xs download-image",data-id=image._id.toString(), download)
+					span(class="glyphicon glyphicon-download-alt") Download
 				button(type="button", data-id=image._id.toString(), class="btn btn-danger btn-xs remove-image", data-toggle="modal" data-target="#delete-image-confirm")
-					span(class="glyphicon glyphicon-trash")
+					span(class="glyphicon glyphicon-trash") Delete
