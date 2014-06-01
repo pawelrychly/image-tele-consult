@@ -44,8 +44,8 @@ module.exports.controller = function(app, passport) {
 	});
 	
 	app.get('/api', function(req, res) {
-		user = req.user //app.get('user')
-		res.render('api', { title: 'Image TeleConsult', success: req.param('success') });
+		user = req.user || false//app.get('user')
+		res.render('api', { title: 'Image TeleConsult', success: req.param('success'), email:user.email});
 	});
 
 	app.get('/', function(req, res) {

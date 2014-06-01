@@ -89,3 +89,24 @@ td button {
 #progress-image-upload{
   display:block;
 }
+
+#add-permission {
+  margin-left: 20px
+}
+
+#add-permission-panel {
+  min-height: 70px;
+  margin-top: 30px;
+}
+#cooperators-filter-text {
+  min-width: 250px
+}
+
+.search-controls {
+  margin-bottom: 10px
+}
+
+#cooperators-wrapper {
+  max-height: 150px;
+  overflow:auto;
+}

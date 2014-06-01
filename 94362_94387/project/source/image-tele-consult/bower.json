@@ -14,6 +14,7 @@
   "dependencies": {
     "bootstrap": "~3.1.1",
     "bootstrapValidator": "~0.4.1",
-    "jquery-loader-plugin": "~2.1.1"
+    "jquery-loader-plugin": "~2.1.1",
+    "bs-typeahead": "~0.0.3"
   }
 }

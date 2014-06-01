@@ -59,7 +59,9 @@ module.exports.controller = function(app, passport) {
 		var image_id = mongoose.Types.ObjectId(id)
 		Image.remove({_id: image_id }, function(err){
 			if (err) throw err;
-			res.json({status:"OK"})	
+			Permission.remove({imageID:image_id}, function(){
+				res.json({status:"OK"})	
+			})
 		})
 	})
 

@@ -1,3 +1,11 @@
+var isEmail = function(value) {
+    if (value == '') {
+        return true;
+    }
+    var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegExp.test(value);
+}
+
 var ajaxWithLoader = function(obj) {
     var settings = {
         beforeSend: function(xhr, settings) {
@@ -32,6 +40,18 @@ $('document').ready(function() {
 
     $("#form-sign-up").bootstrapValidator();
     $("#form-sign-in").bootstrapValidator();
+  
+    $("#cooperators-filter-text").on("change", function(evt){
+        $(".search-user-help").removeClass("text-danger")
+        if (!isEmail($(this).val())) {
+            $("#add-permission").prop('disabled', true)
+            $(".search-user-help").addClass("text-danger")
+            $(".search-user-help").html("Value is not a correct email addres")
+        } else {
+            $("#add-permission").prop('disabled', false)
+            $(".search-user-help").html("")
+        }
+    })
 
     $("#form-sign-in").submit(function() {
         var self = this
@@ -161,6 +181,41 @@ $('document').ready(function() {
             window.location = "/api/images/" + id + "/download?token=" + data.token
         
         })
+        $(this).find(".select-cooperators").click(function(event){
+            console.log("select-cooperators")
+            var id = $(this)[0].getAttribute("data-id").toString() 
+            var name = $(this)[0].getAttribute("data-image").toString()   
+            $("#modal-file-name").html(name)
+            $("#cooperators-list").load("/api/cooperators/" + id)
+            $("#add-permission").click(function(evt){
+                userInput = $("#cooperators-filter-text")[0]
+                email = $(userInput).val()
+                if (email.length > 0) {
+                    $.ajax({
+                        type: "POST",   
+                        url: "/api/cooperators/" + id +"/" + email,
+                        success: function(data){
+                           console.log(data)
+                           if (data.iscomplete) {
+                            console.log("success")
+                            console.log(data)
+                                $(".search-user-help").addClass("text-success")
+                                $(".search-user-help").html(data.message)
+                                $("#cooperators-list").load("/api/cooperators/" + id)
+                           } else {
+                                $(".search-user-help").addClass("text-danger")
+                                $(".search-user-help").html(data.message)
+                           }                      
+                        },
+                    });
+                } else {
+                    $(".search-user-help").addClass("text-danger")
+                    $(".search-user-help").html("Please enter a correct email addres")
+                    
+                }
+                
+            })
+        })
     });
 
     $("#images").load('/api/images', function(err) {
@@ -177,5 +232,52 @@ $('document').ready(function() {
             $("#selected-image-name").html("No file selected");
         }       
     })
+
+    $("#select-cooperators").ready(function(event){
+        console.log("load cooperators")
+        $.ajax({
+            type: "GET",   
+            url: "/api/accounts",
+            processData: false,
+            contentType: false,
+            success: function(data){
+               /*$("#images").load('/api/accounts', function(data){
+                    console.log(data)
+                });*/
+                users = data.map(function(user){
+                    return(user.email)
+                })
+                console.log(users)
+                $('input.typeahead').typeahead({
+                    source: users
+                });
+                console.log(data)                       
+            },
+        });
+        //var users = $.load("/api/accounts")
+        //console.log(users)
+        /*$(this).find(".remove-image").click(function(event){
+            
+            var id = $(this)[0].getAttribute("data-id").toString()
+            $('#delete-confirm').off();
+            $('#delete-confirm').click(function(){
+                event.stopPropagation();
+                event.preventDefault();
+                $.ajax({
+                    type: "DELETE",   
+                    url: "/api/images/" + id,
+                    processData: false,
+                    contentType: false,
+                    success: function(data){
+                       if (data.status == "OK") {
+                            $("#images").load('/api/images', function(err){
+                                $(this).trigger("load")
+                            });
+                       }                       
+                    },
+                });
+            });
+        })*/
+    });
     
 })

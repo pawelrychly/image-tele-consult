@@ -11,16 +11,17 @@ html
     script(src='/bower_components/bootstrapValidator/dist/js/bootstrapValidator.js')
     script(src='/javascripts/app.js')
     script(src='/bower_components/jquery-loader-plugin/jquery.loader.js')
+    script(src='/bower_components/bs-typeahead/js/bootstrap-typeahead.js')
   body
     div(class='navbar navbar-inverse navbar-fixed-top', role='navigation')
       div(class='container')
         div(class='navbar-header')
           a(class='navbar-brand') Image TeleConsult
         div(class='navbar-collapse collapse')
-          - if (settings.user)
+          - if (email)
             ul(class='nav navbar-nav navbar-right')
               li(class='dropdown')
-                a(id='user-menu', role='button', class='toggle-dropdown', data-toggle='dropdown', href='#') #{settings.user.email}
+                a(id='user-menu', role='button', class='toggle-dropdown', data-toggle='dropdown', href='#') #{email}
                 ul(class='dropdown-menu', role='menu', aria-labelledby='user-menu')
                   li
                     a(id='sign-out-button', href='#') Sign Out
