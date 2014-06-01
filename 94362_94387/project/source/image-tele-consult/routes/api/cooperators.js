@@ -76,7 +76,7 @@ module.exports.controller = function(app, passport) {
 		    		})
 		    	}
 	    		console.log("cooperators: dataToDisplay")
-	    		res.render("api/cooperators",{cooperators:dataToDisplay, length:dataToDisplay.length});	
+	    		res.render("api/cooperators",{cooperators:dataToDisplay, length:dataToDisplay.length, imageid:imageid});	
 		    	
 	    	});	
 	    })

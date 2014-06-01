@@ -14,7 +14,20 @@ module.exports.controller = function(app, passport) {
 	    var user_id = mongoose.Types.ObjectId(user._id.toString())
 	    Account.find({}, {email:"", _id:""}, function(err, accounts) {
 	    	if (err) throw err;
-			res.json(accounts);
+			res.json({status:"OK", accounts:accounts});
 	    })
 	})	
+
+	app.delete('/api/accounts', function(req, res, next) {
+		var user = req.user || false
+	    var user_id = mongoose.Types.ObjectId(user._id.toString())
+	    Image.remove({user:user_id}, function() {
+	    	Permission.remove({userID: user_id}, function(){
+	    		Account.remove({_id:user_id}, function(err, accounts) {
+	    			if (err) res.json({status:"ERROR"})
+					res.json({status: "OK", message: "Your account is deleted"})
+			    })
+	    	})
+	    })
+	})
 }

@@ -40,6 +40,11 @@ $('document').ready(function() {
 
     $("#form-sign-up").bootstrapValidator();
     $("#form-sign-in").bootstrapValidator();
+    $('#list-of-tabs a').click(function (e) {
+      e.preventDefault()
+      console.log("click")
+      $(this).tab('show')
+    });
   
     $("#cooperators-filter-text").on("change", function(evt){
         $(".search-user-help").removeClass("text-danger")
@@ -89,6 +94,19 @@ $('document').ready(function() {
              });
         return false; 
     });
+
+    $("#delete-account-confirm-button").click(function(){
+        $.ajax({
+            type: "DELETE",   
+            url: "/api/accounts",
+            success: function(data){
+                if (data.status=="OK") {
+                    sessionStorage.removeItem('user');
+                    window.location.replace("sign-up");
+                } 
+            },
+         });
+    })
 
     $("#sign-out-button").click(function() {
         $.ajax({
@@ -151,6 +169,25 @@ $('document').ready(function() {
         }
         return false; 
     });
+
+    $("#cooperators-list").load(function(evt) {
+        $(this).find(".remove-cooperator").click(function(e) {
+             var id = $(this)[0].getAttribute("data-id").toString()
+             var imageID = $(this)[0].getAttribute("data-image").toString()
+             $.ajax({
+                type: "DELETE",   
+                url: "/api/cooperators/" + imageID + "/" + id,
+                success: function(data){
+                   if (data.status == "OK") {
+                        $("#cooperators-list").load("/api/cooperators/" + imageID, function(err) {
+                            $(this).trigger("load")
+                        })
+                   }                       
+                },
+            });
+        })
+    })
+
     $("#images").on("load", function(event){
         $(this).find(".remove-image").click(function(event){
             
@@ -186,7 +223,9 @@ $('document').ready(function() {
             var id = $(this)[0].getAttribute("data-id").toString() 
             var name = $(this)[0].getAttribute("data-image").toString()   
             $("#modal-file-name").html(name)
-            $("#cooperators-list").load("/api/cooperators/" + id)
+            $("#cooperators-list").load("/api/cooperators/" + id, function(){
+                $(this).trigger("load")
+            })
             $("#add-permission").click(function(evt){
                 userInput = $("#cooperators-filter-text")[0]
                 email = $(userInput).val()
@@ -201,7 +240,9 @@ $('document').ready(function() {
                             console.log(data)
                                 $(".search-user-help").addClass("text-success")
                                 $(".search-user-help").html(data.message)
-                                $("#cooperators-list").load("/api/cooperators/" + id)
+                                $("#cooperators-list").load("/api/cooperators/" + id, function(){
+                                    $(this).trigger("load")
+                                })
                            } else {
                                 $(".search-user-help").addClass("text-danger")
                                 $(".search-user-help").html(data.message)
@@ -244,14 +285,15 @@ $('document').ready(function() {
                /*$("#images").load('/api/accounts', function(data){
                     console.log(data)
                 });*/
-                users = data.map(function(user){
-                    return(user.email)
-                })
-                console.log(users)
-                $('input.typeahead').typeahead({
-                    source: users
-                });
-                console.log(data)                       
+                if (data.status == "OK") {
+                    users = data.accounts.map(function(user){
+                        return(user.email)
+                    })
+                    console.log(users)
+                    $('input.typeahead').typeahead({
+                        source: users
+                    });
+                }                     
             },
         });
         //var users = $.load("/api/accounts")

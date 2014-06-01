@@ -8,6 +8,34 @@ var path = require('path')
 
 module.exports.controller = function(app, passport) {
 
+	var checkPermissions = function(req, res, next) {
+		console.log("checking permissions")
+		var user = req.user || false
+		var user_id = mongoose.Types.ObjectId(user._id.toString())
+		var imageid = req.params.id
+		var image_id = mongoose.Types.ObjectId(imageid)
+		Permission.find({userID:user_id, imageID:image_id}, function(err, permissions) {
+	    	if (err) throw err;
+	    	console.log("permissions")
+	    	console.log(user_id)
+			console.log(image_id)
+			console.log(permissions)
+			if (permissions.length > 0) {
+				next()
+			} else {
+				res.json({status: "ERROR", message: "You have no permissions to this file"})
+			}
+		})
+	}
+
+	app.put('/api/images/:id', function(req, res, next) {
+		checkPermissions(req, res, next)
+	})
+
+	app.delete('/api/images/:id', function(req, res, next) {
+		checkPermissions(req, res, next)
+	})
+
 	app.get('/api/images/:id/download', function(req, res, next) {
 		var user = req.user || false
 	    var user_id = mongoose.Types.ObjectId(user._id.toString())
@@ -39,18 +67,7 @@ module.exports.controller = function(app, passport) {
 					    }
 					});
 				});
-
-  				  				//res.download(file); // Set disposition and send it.
-			}
-			
-			/*fs.writeFile("//test", "Hey there!", function(err) {
-			    if(err) {
-			        console.log(err);
-			    } else {
-			        console.log("The file was saved!");
-			    }
-			}); */
-				
+			}				
 		})
 	})	
 
@@ -94,11 +111,20 @@ module.exports.controller = function(app, passport) {
 			    	console.log(emailsByIds)
 			    	var dataToDisplay = []
 			    	for (i in images) {
+			    		isforeign = false
+			    		console.log(user_id.toString())
+			    		console.log(images[i].user.toString())
+			    		console.log("FIND")
+			    		if (images[i].user.toString() != user_id.toString()) {
+			    			isforeign = true
+			    		}
+			    		console.log(isforeign)
 			    		dataToDisplay.push({
 			    			_id: images[i]._id,
 			    			name: images[i].name,
 			    			size: images[i].size,
-			    			user: emailsByIds[images[i].user]
+			    			user: emailsByIds[images[i].user],
+			    			isforeign: isforeign
 			    		})
 			    	}
 			    	//console.log(dbata)

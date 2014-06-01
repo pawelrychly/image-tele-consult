@@ -25,8 +25,6 @@ module.exports.controller = function(app, passport) {
                         res.json({email: user.email, token : createdToken});    
                     }
                 });
-
-                //res.redirect('/api?token=account');
             }
         });
 	})

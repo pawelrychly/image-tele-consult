@@ -71,6 +71,14 @@ td button {
   margin-right: 20px;
 }
 
+.tab-content{
+  padding-top: 20px;
+}
+
+#images {
+  font-size: small;
+}
+
 #image-select {
   margin-right: 5px;
 }

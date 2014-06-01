@@ -5,16 +5,12 @@ module.exports.controller = function(app, passport) {
     app.post('/sign-in', function(req, res, next) {
         passport.authenticate('local', function(err, user, info) {
             if (err) {
-                console.log("Error")
                 res.render('messages', {error: 'Unknown Error.'});  
             }
             if (!user) { 
-                console.log("Not user")
                 res.render('messages', {error: 'Incorrect login or password!'}); 
             }
             if (!err && user) {
-                console.log("USER:")
-                //console.log(user)
                 Account.createToken(user.email, function(err, createdToken) {
                     if (err) {
                         res.render('messages',{error: 'Error during token generating'});
@@ -34,7 +30,6 @@ module.exports.controller = function(app, passport) {
     app.get('/logout(\\?)?', function(req, res) {
         var messages = flash('Logged out', null);
         var incomingToken = req.headers.token;
-        console.log('LOGOUT: incomingToken: ' + incomingToken);
         if (incomingToken) {
             var decoded = Account.decode(incomingToken);
             if (decoded && decoded.email) {

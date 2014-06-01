@@ -9,27 +9,14 @@ module.exports.controller = function(app, passport) {
 		if (token !== null) {
 			Account.checkUserToken(token, function(isLoggedIn, usr) {
 	        	if (isLoggedIn) {
-	        		console.log("You are logged In2");
 	        		req.user = usr
-	        		//app.set('user', usr);
 	        		next();
 	        	} else {
-	        		console.log("Is not logged in")
 	        		res.redirect('/sign-in')
 	        	}
         	})		
 		} else { 
-			console.log("No token")
 			res.redirect('/sign-in')
-			/*user = app.get('user') || false
-			if (user) {
-				console.log(user)
-				console.log("User but no token")
-				res.render('api')
-			} else {
-				console.log("User is not logged.")
-				
-			}*/
 		}
 	}
 
