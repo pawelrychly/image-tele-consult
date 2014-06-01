@@ -6,7 +6,11 @@ block content
 			a(href="#images-panel", data-toggle="tab") Images
 		li()
 			a(href="#profile-panel", data-toggle="tab") Profile
+		li()
+			a(href="#editor-panel", data-toggle="tab") Editor
 	div(id='tab-content-area',class='tab-content')
+		div(id='editor-panel', class='tab-pane fade')
+
 		div(id='profile-panel', class='tab-pane fade')
 			button(type='button',id='delete-account', class='btn btn-danger',data-dismiss='modal',data-toggle="modal", data-target="#delete-account-confirm") Delete your profile
 			div(class='modal fade', id='delete-account-confirm')

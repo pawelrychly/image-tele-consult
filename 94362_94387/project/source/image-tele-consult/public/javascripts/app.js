@@ -58,6 +58,8 @@ $('document').ready(function() {
         }
     })
 
+    $("#editor-panel").load('/api/editor');
+
     $("#form-sign-in").submit(function() {
         var self = this
         ajaxWithLoader({

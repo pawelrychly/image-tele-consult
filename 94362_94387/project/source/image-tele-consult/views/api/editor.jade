@@ -1,0 +1,33 @@
+div(class='panel-group tools-panel')
+	div(id="filters", class="panel panel-default")
+		div(class='panel-heading')
+			h4(class='panel-title')
+				a(data-toggle="collapse", data-parent="#tools-panel", href="#filter-tools") Filters
+		div(class="panel-collapse collapse in", id="filter-tools")
+			button(id="invertFilter") Invert Colors
+			button(id="grayscaleFilter") Convert to Grayscale
+			button(id="brightenFilterUP") Increase brightness
+			button(id="brightenFilterDOWN") Lower brightness
+	div(id="modes", class="panel panel-default")
+		div(class='panel-heading')
+			h4(class='panel-title')
+				a(data-toggle="collapse", data-parent="#tools-panel", href="#modes-tools") Modes
+		div(class="panel-collapse collapse in", id="modes-tools")
+			button(id="none") Drag and drop
+			button(id="rectangle") Rectangle
+			button(id="point") Point
+			button(id="text") Text
+	div(id="extras", class="panel panel-default")
+		div(class='panel-heading')
+			h4(class='panel-title')
+				a(data-toggle="collapse", data-parent="#tools-panel", href="#extras-tools") Extras
+		div(class="panel-collapse collapse in", id="extras-tools")
+			button(id="loadImage") Load image
+			button(id="undo") Undo last action
+	div(id="empty-space")
+div(class='container-wraper')
+	div(id='container')
+
+
+script(src='../javascripts/kinetic.js')
+script(src='../javascripts/editor.js')
