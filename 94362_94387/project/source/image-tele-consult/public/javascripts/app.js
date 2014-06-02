@@ -58,8 +58,6 @@ $('document').ready(function() {
         }
     })
 
-    $("#editor-panel").load('/api/editor');
-
     $("#form-sign-in").submit(function() {
         var self = this
         ajaxWithLoader({
@@ -190,6 +188,16 @@ $('document').ready(function() {
         })
     })
 
+    $("#editor-panel").on("load", function(evt){
+        self = this
+        console.log("on load editor")
+        $(this).find(".back-to-images-button").click(function(evt){
+            console.log("click")
+            $(self).empty()
+            $("#images").show()
+        })
+    })
+
     $("#images").on("load", function(event){
         $(this).find(".remove-image").click(function(event){
             
@@ -213,6 +221,15 @@ $('document').ready(function() {
                 });
             });
         })
+        $(this).find(".edit-image").click(function(event){
+            console.log("click")
+            var id = $(this)[0].getAttribute("data-id").toString()    
+            $("#images-panel").hide()
+            $("#editor-panel").load('/api/images/'+id+"/editor");
+            $("#editor-panel").trigger("load")
+        })
+
+
         $(this).find(".download-image").click(function(event){
             
             var id = $(this)[0].getAttribute("data-id").toString()    

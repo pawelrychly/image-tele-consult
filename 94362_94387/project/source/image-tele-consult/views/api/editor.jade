@@ -1,30 +1,36 @@
+div(class='image-buffer')
+	image(src='/api/images/' + imageid + '?token=' + token)
 div(class='panel-group tools-panel')
-	div(id="filters", class="panel panel-default")
-		div(class='panel-heading')
-			h4(class='panel-title')
-				a(data-toggle="collapse", data-parent="#tools-panel", href="#filter-tools") Filters
-		div(class="panel-collapse collapse in", id="filter-tools")
-			button(id="invertFilter") Invert Colors
-			button(id="grayscaleFilter") Convert to Grayscale
-			button(id="brightenFilterUP") Increase brightness
-			button(id="brightenFilterDOWN") Lower brightness
-	div(id="modes", class="panel panel-default")
-		div(class='panel-heading')
-			h4(class='panel-title')
-				a(data-toggle="collapse", data-parent="#tools-panel", href="#modes-tools") Modes
-		div(class="panel-collapse collapse in", id="modes-tools")
-			button(id="none") Drag and drop
-			button(id="rectangle") Rectangle
-			button(id="point") Point
-			button(id="text") Text
+	ul(class='pager back-to-images')
+		li(class="previous")
+			a(href="#", class="back-to-images-button") Exit
 	div(id="extras", class="panel panel-default")
 		div(class='panel-heading')
 			h4(class='panel-title')
 				a(data-toggle="collapse", data-parent="#tools-panel", href="#extras-tools") Extras
 		div(class="panel-collapse collapse in", id="extras-tools")
-			button(id="loadImage") Load image
-			button(id="undo") Undo last action
-	div(id="empty-space")
+			button(id="loadImage",class="btn btn-default btn-xs") Load image
+			button(id="undo",class="btn btn-default btn-xs") Undo last action
+	div(id="filters", class="panel panel-default")
+		div(class='panel-heading')
+			h4(class='panel-title')
+				a(data-toggle="collapse", data-parent="#tools-panel", href="#filter-tools") Filters
+		div(class="panel-collapse collapse in", id="filter-tools")
+			button(id="invertFilter",class="btn btn-default btn-xs") Invert Colors
+			button(id="grayscaleFilter",class="btn btn-default btn-xs") Convert to Grayscale
+			button(id="brightenFilterUP", class="btn btn-default btn-xs") Increase brightness
+			button(id="brightenFilterDOWN", class="btn btn-default btn-xs") Lower brightness
+	div(id="modes", class="panel panel-default")
+		div(class='panel-heading')
+			h4(class='panel-title')
+				a(data-toggle="collapse", data-parent="#tools-panel", href="#modes-tools") Modes
+		div(class="panel-collapse collapse in", id="modes-tools")
+			button(id="none", class="btn btn-default btn-xs") Drag and drop
+			button(id="rectangle", class="btn btn-default btn-xs") Rectangle
+			button(id="point", class="btn btn-default btn-xs") Point
+			button(id="text",class="btn btn-default btn-xs") Text
+			button(type="button", class="btn btn-default btn-xs")
+				span(class="glyphicon glyphicon-comment") Comment
 div(class='container-wraper')
 	div(id='container')
 

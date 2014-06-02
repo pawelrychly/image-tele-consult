@@ -7,7 +7,8 @@ var imageSchema = new Schema({
     user: { type: Schema.Types.ObjectId, required: true},
     created: {type: Date, default: Date.now },
     image: {type: Buffer, required:true},
-    size: {type: Number, required:true}
+    size: {type: Number, required:true},
+    mimetype: {type: String, required: true}
 })
 
 var Image = mongoose.model('Image', imageSchema);

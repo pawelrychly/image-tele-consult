@@ -2,9 +2,12 @@
 var debug = require('debug')('my-application');
 var app = require('../app').app;
 var https_options = require('../app').https_options
-
 var https = require('https')
-https.createServer(https_options, app).listen(process.env.PORT || 3000)
+var io = require('socket.io')
+var httpsForWebsockets = https.createServer(https_options, app).listen(process.env.PORT || 3000)
+// = https.createServer(https_options, app)
+var websocket = io.listen(httpsForWebsockets)
+console.log(httpsForWebsockets)
 
 require("http").createServer(function(req, res){
      console.log(req.headers.host)
@@ -20,6 +23,17 @@ require("http").createServer(function(req, res){
        'Location':'https://'+host+req.url});
      res.end('Redirecting to SSL\n');
   }).listen(3001);
+
+websocket.sockets.on('connection', function (socket) {
+  socket.on('getData', function (options,id) {
+     var data={"message":"Hello World!", options:options};
+     socket.emit("gotData",data,id); });
+  }
+).on('getOtherData', function(options,id) {
+     var otherData={"result":42}; 
+     socket.emit("gotData",otherData,id); 
+  }
+);
 
 /*app.set('port', process.env.PORT || 3000);
 

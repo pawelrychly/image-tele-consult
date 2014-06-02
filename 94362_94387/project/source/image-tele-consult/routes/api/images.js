@@ -36,6 +36,49 @@ module.exports.controller = function(app, passport) {
 		checkPermissions(req, res, next)
 	})
 
+	//serving an image
+	app.get('/api/images/:id', function(req, res, next) {
+		var user = req.user || false
+	    var user_id = mongoose.Types.ObjectId(user._id.toString())
+		var id = req.params.id
+		var image_id = mongoose.Types.ObjectId(id)
+		Image.find({_id: image_id }, function(err, data){
+			if (err) throw err;
+			if (data.length > 0) {
+				image = data[0]
+				var fileDir = __dirname + '/../../uploads/' + user_id;
+  				mkdirp(fileDir, function(err) { 
+  					fileName = fileDir + "/" + image.name
+  					fs.writeFile(fileName, image.image, function(err) {
+					    if(err) {
+					        console.log(err);
+					    } else {
+					        resolvedDir = path.resolve(fileName);
+					        var img = fs.readFileSync(resolvedDir);
+     						res.writeHead(200, {'Content-Type': image.mimetype });
+     						res.end(img, 'binary');
+     						fs.unlink(resolvedDir, function (err) {
+									if (err) throw err;
+									console.log('dir successfully deleted');
+							});
+					    }
+					});
+				});
+			}				
+		})
+	})	
+
+	app.get('/api/images/:id/editor', function(req, res, next) {
+		console.log("DIR: /api/images/editor")
+		var user = req.user || false
+	    var user_id = mongoose.Types.ObjectId(user._id.toString())
+		var id = req.params.id
+		var image_id = mongoose.Types.ObjectId(id)
+		Account.findOne({_id: user_id}, function(err, usr) {
+            res.render("api/editor", {imageid:image_id.toString(), token: usr.token.token})
+        });
+	})	
+
 	app.get('/api/images/:id/download', function(req, res, next) {
 		var user = req.user || false
 	    var user_id = mongoose.Types.ObjectId(user._id.toString())
@@ -166,7 +209,8 @@ module.exports.controller = function(app, passport) {
 				    	name: fileName,
 			    		user: user_id,
 			    		image: data,
-			    		size: file.size
+			    		size: file.size,
+			    		mimetype: file.mimetype
 			 		})
 			 		var permissionData = new Permission({
 			 			imageID: imageData._id,
@@ -195,4 +239,6 @@ module.exports.controller = function(app, passport) {
 			saveFileToMongoDB(imageFile);
         } 
 	})
+
+	
 }

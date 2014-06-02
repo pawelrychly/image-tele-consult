@@ -181,3 +181,11 @@ td button {
   background-color: black;
 }
 
+.image-buffer{
+  display:none;
+}
+
+.back-to-images{
+  margin-bottom: 5px;
+  margin-top: 2px;
+}

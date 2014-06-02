@@ -111,20 +111,38 @@ function addTooltip(x,y,l, text) {
 
 function loadSampleImage() {
 	imageObj = new Image();
-      imageObj.onload = function() {
-        img = new Kinetic.Image({
-          x: 0,
-          y: 0,
-          image: imageObj,
-          width: 1000,
-          height: 500
-        });
-        //img.cache();
-        img.filters([Kinetic.Filters.Brighten]); 
-        imageLayer.add(img);
-        imageLayer.draw();
-      };
-      imageObj.src = 'sampleimage.jpg';
+    imageObj.onload = function() {
+      img = new Kinetic.Image({
+        x: 0,
+        y: 0,
+        image: imageObj,
+        width: 1000,
+        height: 500
+      });
+      //img.cache();
+      img.filters([Kinetic.Filters.Brighten]); 
+      imageLayer.add(img);
+      imageLayer.draw();
+    };
+    imageObj.src = 'sampleimage.jpg';
+}
+
+function loadImage() {
+  imageObj = new Image();
+  imageObj.onload = function() {
+    img = new Kinetic.Image({
+      x: 0,
+      y: 0,
+      image: imageObj,
+      width: 1000,
+      height: 500
+    });
+    //img.cache();
+    img.filters([Kinetic.Filters.Brighten]); 
+    imageLayer.add(img);
+    imageLayer.draw();
+  };
+  imageObj.src = 'sampleimage.jpg';
 }
 
 function invertImage() {
