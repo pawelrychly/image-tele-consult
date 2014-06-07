@@ -1,3 +1,5 @@
+var socket = io.connect();
+
 var mode = "RECTANGLE";
 var imageObj = null;
 var img = null;

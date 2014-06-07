@@ -189,12 +189,12 @@ $('document').ready(function() {
     })
 
     $("#editor-panel").on("load", function(evt){
-        self = this
+        var self = this
         console.log("on load editor")
+        backToImages = $(this).find(".back-to-images-button")
         $(this).find(".back-to-images-button").click(function(evt){
-            console.log("click")
             $(self).empty()
-            $("#images").show()
+            $("#images-panel").show()
         })
     })
 
@@ -225,8 +225,10 @@ $('document').ready(function() {
             console.log("click")
             var id = $(this)[0].getAttribute("data-id").toString()    
             $("#images-panel").hide()
-            $("#editor-panel").load('/api/images/'+id+"/editor");
-            $("#editor-panel").trigger("load")
+            $("#editor-panel").load('/api/images/'+id+"/editor", function(){
+                $("#editor-panel").trigger("load")    
+            });
+            
         })
 
 

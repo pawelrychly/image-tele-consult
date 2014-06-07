@@ -25,7 +25,9 @@ require("http").createServer(function(req, res){
   }).listen(3001);
 
 websocket.sockets.on('connection', function (socket) {
+  
   socket.on('getData', function (options,id) {
+     
      var data={"message":"Hello World!", options:options};
      socket.emit("gotData",data,id); });
   }
