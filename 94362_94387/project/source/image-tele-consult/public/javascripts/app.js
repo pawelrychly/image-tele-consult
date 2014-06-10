@@ -66,7 +66,7 @@ $('document').ready(function() {
                 data: $("#form-sign-in").serialize(),
                 success: function(data){
                     if (data.token) {
-                        sessionStorage.setItem('user', JSON.stringify({email: data.email, token: data.token}));
+                        sessionStorage.setItem('user', JSON.stringify({email: data.email, id: data.id, token: data.token}));
                         window.location.replace("/api?token=" + data.token );
                     } else {
                         $(self).find("#messages").html(data)
@@ -255,10 +255,7 @@ $('document').ready(function() {
                         type: "POST",   
                         url: "/api/cooperators/" + id +"/" + email,
                         success: function(data){
-                           console.log(data)
                            if (data.iscomplete) {
-                            console.log("success")
-                            console.log(data)
                                 $(".search-user-help").addClass("text-success")
                                 $(".search-user-help").html(data.message)
                                 $("#cooperators-list").load("/api/cooperators/" + id, function(){

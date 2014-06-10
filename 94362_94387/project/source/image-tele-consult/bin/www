@@ -4,6 +4,7 @@ var app = require('../app').app;
 var https_options = require('../app').https_options
 var https = require('https')
 var io = require('socket.io')
+var Action = require('../models/action')
 var httpsForWebsockets = https.createServer(https_options, app).listen(process.env.PORT || 3000)
 // = https.createServer(https_options, app)
 var websocket = io.listen(httpsForWebsockets)
@@ -25,17 +26,54 @@ require("http").createServer(function(req, res){
   }).listen(3001);
 
 websocket.sockets.on('connection', function (socket) {
-  
-  socket.on('getData', function (options,id) {
-     
-     var data={"message":"Hello World!", options:options};
-     socket.emit("gotData",data,id); });
-  }
-).on('getOtherData', function(options,id) {
-     var otherData={"result":42}; 
-     socket.emit("gotData",otherData,id); 
-  }
-);
+  console.log('User connected');
+  socket.on('disconnect', function(){
+    console.log('User disconnected');
+  });
+  socket.on('joinToRoom', function(roomname) {
+    console.log("User joined to " + roomname)
+    socket.join(roomname);
+  })
+  socket.on('leaveRoom', function(roomname){
+    socket.leave(roomname);
+    console.log("leave room")
+  })
+  socket.on('message', function (message) {
+     console.log(message)
+     var imageID = message.data.imageID
+     console.log('message-from-others:' + message )
+     socket.broadcast.to(imageID).emit('message-from-others', message);
+  });
+  socket.on('draw', function (obj) {
+    console.log('draw:' + obj )
+    console.log("email: " + obj.email)
+    var data = obj.data
+    var roomID = data.imageID.toString();
+    var action = new Action({
+      imageID: mongoose.Types.ObjectId(data.imageID.toString()),
+      userID: mongoose.Types.ObjectId(data.userID.toString()),
+      objectID: data.objectID,
+      mode: data.mode,
+      x: data.x || null,
+      y: data.y || null,
+      width: data.width || null,
+      height: data.height || null,
+      color: data.color || null,
+      content: data.content || null,
+      type: data.type || null
+    })
+    console.log(action)
+    //console.log("object:" + JSON.stringify(obj.data))
+    action.save(function(err){
+      if (err) throw err;
+      obj.data = action
+      socket.broadcast.to(roomID).emit('draw', obj); 
+    });
+    
+  });
+     //var data={"message":"Hello World!", options:options};
+     //socket.emit("testreply",data,id); });
+});
 
 /*app.set('port', process.env.PORT || 3000);
 

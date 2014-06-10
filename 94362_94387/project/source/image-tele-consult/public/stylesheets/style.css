@@ -171,8 +171,8 @@ td button {
 
 .container-wraper {
   background-color: white;
-  max-width: 77%;
-  max-height: 350px;
+  max-width: 75%;
+  max-height: 400px;
   overflow: auto;
   float:right;
 }
@@ -189,3 +189,32 @@ td button {
   margin-bottom: 5px;
   margin-top: 2px;
 }
+
+#message-to-send {
+  width: 70%;
+  margin-right: 2px;
+}
+#send-chat-form {
+  max-width: 20%;
+}
+
+.chat-wrapper, .history-wrapper{
+  min-height: 100px;
+  max-height: 100px;
+  overflow:auto;
+  padding:3px;
+}
+#messages{
+  padding-left:3px;
+}
+.chat-wrapper #messages li{ 
+  list-style-type: none; 
+  margin-bottom:5px;
+}
+
+#chat-panel {
+  padding: 5px;
+}
+
+
+

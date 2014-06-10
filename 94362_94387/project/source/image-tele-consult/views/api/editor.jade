@@ -1,21 +1,31 @@
-div(class='image-buffer')
+div(class='image-buffer', data-id=imageid)
 	image(src='/api/images/' + imageid + '?token=' + token)
 div(class='panel-group tools-panel')
 	ul(class='pager back-to-images')
 		li(class="previous")
 			a(class="back-to-images-button") Exit
+	div(id="chat", class="panel panel-default")
+		div(class='panel-heading')
+			h4(class='panel-title')
+				a(data-toggle="collapse", data-parent="#tools-panel", href="#chat-panel") Chat
+		div(class="panel-collapse collapse", id="chat-panel")
+			div(class='chat-wrapper')
+				ul(id='messages')
+			form(id='chat-form')
+				input(id='message-to-send',autocomplete='off')
+				button(type='button',class="btn btn-primary btn-xs", id='send-chat-form') Send
 	div(id="extras", class="panel panel-default")
 		div(class='panel-heading')
 			h4(class='panel-title')
 				a(data-toggle="collapse", data-parent="#tools-panel", href="#extras-tools") Extras
-		div(class="panel-collapse collapse in", id="extras-tools")
-			button(id="loadImage",class="btn btn-default btn-xs") Load image
+		div(class="panel-collapse collapse", id="extras-tools")
 			button(id="undo",class="btn btn-default btn-xs") Undo last action
+			button(id="download",class="btn btn-default btn-xs") Download image
 	div(id="filters", class="panel panel-default")
 		div(class='panel-heading')
 			h4(class='panel-title')
 				a(data-toggle="collapse", data-parent="#tools-panel", href="#filter-tools") Filters
-		div(class="panel-collapse collapse in", id="filter-tools")
+		div(class="panel-collapse collapse", id="filter-tools")
 			button(id="invertFilter",class="btn btn-default btn-xs") Invert Colors
 			button(id="grayscaleFilter",class="btn btn-default btn-xs") Convert to Grayscale
 			button(id="brightenFilterUP", class="btn btn-default btn-xs") Increase brightness
@@ -24,13 +34,21 @@ div(class='panel-group tools-panel')
 		div(class='panel-heading')
 			h4(class='panel-title')
 				a(data-toggle="collapse", data-parent="#tools-panel", href="#modes-tools") Modes
-		div(class="panel-collapse collapse in", id="modes-tools")
+		div(class="panel-collapse collapse", id="modes-tools")
 			button(id="none", class="btn btn-default btn-xs") Drag and drop
 			button(id="rectangle", class="btn btn-default btn-xs") Rectangle
 			button(id="point", class="btn btn-default btn-xs") Point
 			button(id="text",class="btn btn-default btn-xs") Text
 			button(type="button", class="btn btn-default btn-xs")
 				span(class="glyphicon glyphicon-comment") Comment
+	div(id="history", class="panel panel-default")
+		div(class='panel-heading')
+			h4(class='panel-title')
+				a(data-toggle="collapse", data-parent="#tools-panel", href="#history-panel") History
+		div(class="panel-collapse collapse", id="history-panel")
+			div(class='history-wrapper')
+				ul(id='historyitems')
+	
 div(class='container-wraper')
 	div(id='container')
 

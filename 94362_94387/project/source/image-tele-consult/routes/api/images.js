@@ -5,8 +5,24 @@ var fs = require("fs")
 var mongoose = require('mongoose')
 var mkdirp = require('mkdirp')
 var path = require('path')
+var gm = require('gm')
+var streamifier = require('streamifier')
 
 module.exports.controller = function(app, passport) {
+	var getPathWithProperExtension = function(path, newext) {
+		var pathArray = path.split(".");
+		if( pathArray.length === 1 || ( pathArray[0] === "" && pathArray.length === 2 ) ) {
+		    return path;
+		}
+		pathArray.pop()
+		pathArray.push(newext)
+		path = pathArray.join(".")
+		return(path)
+	}
+
+	var endsWith = function(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+	}
 
 	var checkPermissions = function(req, res, next) {
 		console.log("checking permissions")
@@ -54,13 +70,36 @@ module.exports.controller = function(app, passport) {
 					        console.log(err);
 					    } else {
 					        resolvedDir = path.resolve(fileName);
-					        var img = fs.readFileSync(resolvedDir);
-     						res.writeHead(200, {'Content-Type': image.mimetype });
-     						res.end(img, 'binary');
-     						fs.unlink(resolvedDir, function (err) {
+					        if (!endsWith(image.mimetype, "jpeg") && !endsWith(image.mimetype, "jpeg")) {
+					        	var newDir = getPathWithProperExtension(resolvedDir,"jpg")
+						        var writeStream = fs.createWriteStream(newDir);
+								var stream = gm(resolvedDir).stream('jpg');
+								stream.pipe(writeStream, { end: false });
+  								stream.on("end", function() {
+  									var img = fs.readFileSync(newDir);
+	  								console.log(img)
+	  								res.writeHead(200, {'Content-Type': "image/jpeg" });
+	     							res.end(img, 'binary');
+	     							fs.unlink(newDir, function (err) {
+										if (err) throw err;
+										console.log('dir successfully deleted');
+									});
+  								})
+  								
+						    } else {
+						    	var img = fs.readFileSync(resolvedDir);
+  								console.log('Goodbye\n');
+								res.writeHead(200, {'Content-Type': image.mimetype });
+     							res.end(img, 'binary');
+     							fs.unlink(resolvedDir, function (err) {
 									if (err) throw err;
 									console.log('dir successfully deleted');
-							});
+								});
+						    }
+					        
+					        //
+     						//console.log(newDir)
+     						
 					    }
 					});
 				});
@@ -81,6 +120,71 @@ module.exports.controller = function(app, passport) {
 
 	app.get('/api/images/:id/download', function(req, res, next) {
 		var user = req.user || false
+		user_id = mongoose.Types.ObjectId(user._id.toString())
+		id = req.params.id
+		var image_id = mongoose.Types.ObjectId(id)
+		Image.find({_id: image_id}, {name:"", mimetype:""}, function(err, data){
+			if (err) throw err;
+			if (data.length > 0) {
+				image = data[0]
+				name = image.name
+				type = image.mimetype			    
+			    var fileDir = __dirname + '/../../uploads/' + user_id;
+				fileName = fileDir + "/" + image.name
+				fileName = path.resolve(fileName);
+				res.download(fileName, function(err){
+					if (err) {
+					throw err;
+					} else {
+						fs.unlink(fileName, function (err) {
+						if (err) throw err;
+						console.log('dir successfully deleted');
+					});
+}
+				});
+			}
+		});
+	});
+
+	app.post('/api/images/:id/download', function(req, res, next) {
+		var user = req.user || false
+		user_id = mongoose.Types.ObjectId(user._id.toString())
+		id = req.params.id
+		var image_id = mongoose.Types.ObjectId(id)
+		Image.find({_id: image_id}, {name:"", mimetype:""}, function(err, data){
+			if (err) throw err;
+			if (data.length > 0) {
+				image = data[0]
+				name = image.name
+				type = image.mimetype
+				var imageFile = req.body.images || false
+			    downloadFile = function(imageFile, filetype) {
+  					console.log(imageFile) 
+  					fileName = fileDir + "/" + image.name
+  					fileName = path.resolve(fileName);
+  					var writeStream = fs.createWriteStream(fileName);
+					var arr = imageFile.split(",");
+					var head = arr.splice(0,1).join("");
+					var imageFile = arr.join(",");
+					var img = new Buffer(imageFile, 'base64');
+					
+					//var readStream = streamifier.createReadStream(img)
+					//console.log(readStream)
+					var stream = gm(img, 'img.jpg').stream(filetype);
+					stream.pipe(writeStream, { end: false });
+					stream.on("end", function() {
+						res.json({status:"OK"})
+					})
+				}
+			    var fileDir = __dirname + '/../../uploads/' + user_id;
+			    if (type.match(".*dicom")) {
+	  				mkdirp(fileDir,downloadFile(imageFile, "dcm"));
+			    } else{
+			    	mkdirp(fileDir,downloadFile(imageFile, "jpg"));
+			    }
+			}
+		});
+		/*var user = req.user || false
 	    var user_id = mongoose.Types.ObjectId(user._id.toString())
 		var id = req.params.id
 		var image_id = mongoose.Types.ObjectId(id)
@@ -111,7 +215,7 @@ module.exports.controller = function(app, passport) {
 					});
 				});
 			}				
-		})
+		})*/
 	})	
 
 	app.delete('/api/images/:id', function(req, res, next) {

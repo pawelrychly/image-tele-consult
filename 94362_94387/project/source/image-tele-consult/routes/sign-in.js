@@ -15,7 +15,8 @@ module.exports.controller = function(app, passport) {
                     if (err) {
                         res.render('messages',{error: 'Error during token generating'});
                     } else {
-                        res.json({email: user.email, token : createdToken});    
+                        console.log({email: user.email, id: user._id, token : createdToken})
+                        res.json({email: user.email, id: user._id, token : createdToken});    
                     }
                 });
             }
@@ -33,10 +34,7 @@ module.exports.controller = function(app, passport) {
         if (incomingToken) {
             var decoded = Account.decode(incomingToken);
             if (decoded && decoded.email) {
-                console.log("past first check...invalidating next...")
                 Account.invalidateUserToken(decoded.email, function(err, user) {
-                    console.log('Err: ', err);
-                    console.log('user: ', user);
                     if (err) {
                         console.log(err);
                         res.json({error: 'Issue finding user (in unsuccessful attempt to invalidate token).'});
