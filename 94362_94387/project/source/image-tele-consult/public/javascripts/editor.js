@@ -13,6 +13,46 @@ var tmpRect = null;
 var actionCounter = 0;
 var currentObjectID = 0;
 var globalBrightness = 0;
+var users = ['0'];
+
+function hsvToRgb(h, s, v){
+    var r, g, b;
+
+    var i = Math.floor(h * 6);
+    var f = h * 6 - i;
+    var p = v * (1 - s);
+    var q = v * (1 - f * s);
+    var t = v * (1 - (1 - f) * s);
+
+    switch(i % 6){
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+
+    return [r * 255, g * 255, b * 255];
+}
+
+function getColor(index) {
+ var oneTwenties = index % 3;
+ var offsetIterations = Math.floor(index / 3);
+ var offset = 0;
+ var currentPartOffset = 60;
+
+ if(offsetIterations > 0) {
+   while(offsetIterations>0) {
+      console.log("Iteration!")
+     offset += currentPartOffset;
+     currentPartOffset /= 2;
+      offsetIterations -= 1;
+   }
+ }
+ return hsvToRgb((oneTwenties*120 + offset) % 360 / 360, 1, 1);
+}
+
 
 var joinToRoom = function(imageID) {
   socket.emit("joinToRoom", imageID);
@@ -61,12 +101,20 @@ function getObjectByID(id) {
 }
 
 
-function addSimpleCircle(x,y,l, objectID) {
+function addSimpleCircle(x,y,l, objectID, userID) {
+      var index = 0;
+      if(users.indexOf(userID) == -1) {
+        users.push(userID);
+        index = users.length -1;
+      } else {
+        index = users.indexOf(userID);
+      }
+      var rgb = getColor(index);
       var circle = new Kinetic.Circle({
         x: x,
         y: y,
         radius: 5,
-        fill: 'red',
+        fill: 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')',
         stroke: 'black',
         strokeWidth: 2,
         draggable: true
@@ -94,7 +142,16 @@ function addSimpleCircle(x,y,l, objectID) {
 
 
 
-function addSimpleTooltip(x,y,l, text, objectID) {
+function addSimpleTooltip(x,y,l, text, objectID, userID) {
+      var index = 0;
+      if(users.indexOf(userID) == -1) {
+        users.push(userID);
+        index = users.length -1;
+      } else {
+        index = users.indexOf(userID);
+      }
+      var rgb = getColor(index);
+
     var tooltip = new Kinetic.Label({
        x: x,
        y: y,
@@ -102,7 +159,7 @@ function addSimpleTooltip(x,y,l, text, objectID) {
     });
 
     tooltip.add(new Kinetic.Tag({
-        fill: 'red',
+        fill: 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')',
         pointerDirection: 'down',
         pointerWidth: 10,
         pointerHeight: 10,
@@ -128,13 +185,22 @@ function addSimpleTooltip(x,y,l, text, objectID) {
 }
 
 
-function addSimpleRectangle(x, y, width, height, layer, objectID) {
+function addSimpleRectangle(x, y, width, height, layer, objectID, userID) {
+  var index = 0;
+      if(users.indexOf(userID) == -1) {
+        users.push(userID);
+        index = users.length -1;
+      } else {
+        index = users.indexOf(userID);
+      }
+      var rgb = getColor(index);
+
   var rect = new Kinetic.Rect({
     x: x,
     y: y,
     width: width, 
     height: height,
-    fill: 'green',
+    fill: 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')',
     stroke: 'black',
     strokeWidth: 4,
     draggable: true,
@@ -162,15 +228,15 @@ var performAction = function(obj) {
   if(obj.mode == "create") {
        if(obj.type == "circle") {
       actionCounter += 1;
-      addSimpleCircle(obj.x, obj.y, layer, obj.objectID);
+      addSimpleCircle(obj.x, obj.y, layer, obj.objectID, obj.userID);
       currentObjectID = obj.objectID + 1;
     }  else if(obj.type == "tooltip") {
       actionCounter += 1;
-      addSimpleTooltip(obj.x, obj.y, layer, obj.content, obj.objectID);
+      addSimpleTooltip(obj.x, obj.y, layer, obj.content, obj.objectID, obj.userID);
       currentObjectID = obj.objectID + 1;
     } else if(obj.type == "rectangle") {
       actionCounter += 1;
-      addSimpleRectangle(obj.x, obj.y, obj.width, obj.height, layer, obj.objectID);
+      addSimpleRectangle(obj.x, obj.y, obj.width, obj.height, layer, obj.objectID, obj.userID);
       currentObjectID = obj.objectID + 1;
     }
   } else if(obj.mode == "update") {
@@ -226,11 +292,12 @@ var rect = new Kinetic.Rect({
 
 
 function addCircle(x,y,l) {
+      var rgb = getColor(0);
       var circle = new Kinetic.Circle({
         x: x,
         y: y,
         radius: 5,
-        fill: 'red',
+        fill: 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')',
         stroke: 'black',
         strokeWidth: 2,
         draggable: true
@@ -268,6 +335,7 @@ function addCircle(x,y,l) {
 
 
 function addTooltip(x,y,l, text) {
+    var rgb = getColor(0);
     var tooltip = new Kinetic.Label({
        x: x,
        y: y,
@@ -275,7 +343,7 @@ function addTooltip(x,y,l, text) {
     });
 
     tooltip.add(new Kinetic.Tag({
-        fill: 'red',
+        fill: 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')',
         pointerDirection: 'down',
         pointerWidth: 10,
         pointerHeight: 10,
@@ -412,13 +480,13 @@ $('#container').on('mousedown', function(e) {
     return;
   lastMouseDownX = e.clientX - $(this).offset().left;
   lastMouseDownY = e.clientY - $(this).offset().top;
-
+var rgb = getColor(0);
   var rect = new Kinetic.Rect({
     x: lastMouseDownX,
     y: lastMouseDownY,
     width: 1, 
     height: 1,
-    fill: 'green',
+    fill: 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')',
     stroke: 'black',
     strokeWidth: 4,
     draggable: true,
